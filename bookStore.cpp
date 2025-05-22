@@ -1,127 +1,290 @@
 #include "book.h"
-#include <fstream>
 #include <iostream>
+#include <fstream>
 #include <sstream>
 #include <stdexcept>
 
-void saveBooksToFile(const bookStructure books[], int numBooks) {
-    ofstream file("sampleBooks.txt");  // Opens a file to save books
-    for (int i = 0; i < numBooks; ++i) {
-        file << books[i].title << "|" << books[i].author << "|" << books[i].year_of_publication << endl;
+const int MAX_BOOKS = 10000;
+
+void viewAllBooks(const bookStructure books[], int numBooks);
+void insertNewBook(bookStructure books[], int& numBooks);
+void deleteBookByTitle(bookStructure books[], int& numBooks);
+void sortBooks(bookStructure books[], int numBooks);
+void searchBooks(const bookStructure books[], int numBooks);
+void saveBooks(const bookStructure books[], int numBooks);
+void loadBooks(bookStructure books[], int& numBooks);
+
+int main() {
+    bookStructure books[MAX_BOOKS];
+    int numBooks = 0; // Tracks how many books are currently in the array
+    loadBooks(books, numBooks); // Load books from file initially
+
+    int choice;
+    bool run = true;
+
+    while (run) {
+        system("cls");
+
+        cout << "\n=== Welcome to BookStore System ===" << endl;
+        cout << "1. View All Books" << endl;
+        cout << "2. Insert a New Book" << endl;
+        cout << "3. Delete a Book (by Title)" << endl;
+        cout << "4. Sort Books" << endl;
+        cout << "5. Search Books" << endl;
+        cout << "6. Exit program" << endl;
+        cout << "\nEnter your choice (1-6): ";
+
+        string input;
+        getline(cin, input);
+
+        try {
+            choice = stoi(input);
+        } catch (...) {
+            cout << "Invalid input! Please enter a number between (1-6)." << endl;
+            cout << "Press Enter to continue...";
+            cin.get();
+            continue;
+        }
+
+        switch(choice) {
+            case 1: 
+                viewAllBooks(books, numBooks);
+                break;
+
+            case 2: 
+                insertNewBook(books, numBooks);
+                break;
+
+            case 3: 
+                deleteBookByTitle(books, numBooks);
+                break;
+
+            case 4: 
+                sortBooks(books, numBooks);
+                break;
+
+            case 5: 
+                searchBooks(books, numBooks);
+                break;
+
+            case 6:
+                cout << "Thank you for using BookStore System." << endl;
+                run = false;
+                break;
+
+            default:
+                cout << "Invalid choice! Please enter a number between 1 and 6." << endl;
+                cout << "Press Enter to continue...";
+                cin.get();
+                break;
+        }
     }
+    return 0;
 }
 
-void loadBooksFromFile(bookStructure books[], int& numBooks) {
-    ifstream file("sampleBooks.txt");  // Opens the file for reading
-    if (!file.is_open()) {
-        cout << "No existing books file found." << endl;
+// Function to view all books
+void viewAllBooks(const bookStructure books[], int numBooks) {
+    if (numBooks == 0) {
+        cout << "No books available in the store." << endl;
+    } else {
+        cout << "\nAll Books in Store:" << endl;
+        cout << "-----------------" << endl;
+        for (int i = 0; i < numBooks; ++i) {
+            cout << "Title: " << books[i].title << endl;
+            cout << "Author: " << books[i].author << endl;
+            cout << "Publication Year: " << books[i].year_of_publication << endl;
+            cout << "-----------------" << endl;
+        }
+    }
+    cout << "\nPress Enter to continue...";
+    cin.get();
+}
+
+// Function to insert a new book
+void insertNewBook(bookStructure books[], int& numBooks) {
+    if (numBooks < MAX_BOOKS) {
+        bookStructure newBook;
+        cout << "\nEnter Book Details:" << endl;
+        cout << "Title: ";
+        getline(cin, newBook.title);
+        cout << "Author: ";
+        getline(cin, newBook.author);
+        cout << "Publication Year: ";
+        string year;
+        getline(cin, year);
+        try {
+            newBook.year_of_publication = stoi(year);
+            books[numBooks] = newBook; 
+            numBooks++;  
+            saveBooks(books, numBooks);   
+            cout << "Book added successfully!" << endl;
+        } catch (...) {
+            cout << "Invalid year input!" << endl;
+        }
+    } else {
+        cout << "Maximum number of books reached!" << endl;
+    }
+    cout << "\nPress Enter to continue...";
+    cin.get();
+}
+
+// Function to delete a book by title
+void deleteBookByTitle(bookStructure books[], int& numBooks) {
+    if (numBooks == 0) {
+        cout << "No books available to delete!" << endl;
+    } else {
+        string titleToDelete;
+        cout << "Enter the title of the book to delete: ";
+        getline(cin, titleToDelete);
+    
+        bool found = false;
+    
+        for (int i = 0; i < numBooks; ++i) {
+            if (books[i].title == titleToDelete) {
+                // Shift all books after the deleted one to the left
+                for (int j = i; j < numBooks - 1; ++j) {
+                    books[j] = books[j + 1];
+                }
+                numBooks--;  
+                saveBooks(books, numBooks);  
+                found = true;
+                cout << "Book deleted successfully!" << endl;
+                break;
+            }
+        }
+    
+        if (!found) {
+            cout << "Book not found!" << endl;
+        }
+    }
+    cout << "\nPress Enter to continue...";
+    cin.get();
+}
+
+// Function to sort books
+void sortBooks(bookStructure books[], int numBooks) {
+    if (numBooks == 0) {
+        cout << "No books available to sort!" << endl;
+        cout << "\nPress Enter to continue...";
+        cin.get();
         return;
     }
 
-    numBooks = 0;  // Reset the number of books
-    string line;
-    while (getline(file, line)) {  // Read file line by line
-        if (numBooks >= 100) break;  // Prevent overflow, since max size is 100
-
-        stringstream ss(line);  // Convert line into stringstream
-        bookStructure book;  // Temporary book object
-        getline(ss, book.title, '|');  // Read title, author, and year
-        getline(ss, book.author, '|');
-        string year;
-        getline(ss, year, '|');
-        try {
-            book.year_of_publication = stoi(year);  // Convert string to integer
-            books[numBooks] = book;  // Insert into the array
-            numBooks++;  // Increment the book count
-        } catch (const std::invalid_argument& e) {
-            cout << "Invalid year format: not a number" << endl;
-        } catch (const std::out_of_range& e) {
-            cout << "Invalid year format: number too large" << endl;
-        }
-    }
-    file.close();
-}
-
-void sortByTitle(bookStructure books[], int numBooks) {
-    for (int i = 1; i < numBooks; ++i) {
-        bookStructure key = books[i];
-        int j;
-        for (j = i - 1; j >= 0 && books[j].title > key.title; --j) {
-            books[j + 1] = books[j];
-        }
-        books[j + 1] = key;
-    }
-}
-
-void sortByAuthor(bookStructure books[], int numBooks) {
-    for (int i = 1; i < numBooks; ++i) {
-        bookStructure key = books[i];
-        int j;
-        for (j = i - 1; j >= 0 && books[j].author > key.author; --j) {
-            books[j + 1] = books[j];
-        }
-        books[j + 1] = key;
-    }
-}
-
-void sortByYearAsc(bookStructure books[], int numBooks) {
-    for (int i = 1; i < numBooks; ++i) {
-        bookStructure key = books[i];
-        int j;
-        for (j = i - 1; j >= 0 && books[j].year_of_publication > key.year_of_publication; --j) {
-            books[j + 1] = books[j];
-        }
-        books[j + 1] = key;
-    }
-}
-
-void sortByYearDesc(bookStructure books[], int numBooks) {
-    for (int i = 1; i < numBooks; ++i) {
-        bookStructure key = books[i];
-        int j;
-        for (j = i - 1; j >= 0 && books[j].year_of_publication < key.year_of_publication; --j) {
-            books[j + 1] = books[j];
-        }
-        books[j + 1] = key;
-    }
-}
-
-int linearSearchByTitle(const bookStructure books[], int numBooks, const string& title) {
-    for (int i = 0; i < numBooks; ++i) {
-        if (books[i].title == title) {
-            return i;  // Return the index of the found book
-        }
-    }
-    return -1;  // Return -1 if not found
-}
-
-int linearSearchByAuthor(const bookStructure books[], int numBooks, const string& author) {
-    for (int i = 0; i < numBooks; ++i) {
-        if (books[i].author == author) {
-            return i;  // Return the index of the found book
-        }
-    }
-    return -1;  // Return -1 if not found
-}
-
-int binarySearchByTitle(const bookStructure books[], int numBooks, const string& title) {
-    size_t left = 0;
-    size_t right = numBooks - 1;
+    cout << "\nChoose sorting option: " << endl;
+    cout << "a. By Title (A-Z)" << endl;
+    cout << "b. By Author (A-Z)" << endl;
+    cout << "c. By Date (Oldest to Newest)" << endl;
+    cout << "d. By Date (Newest to Oldest)" << endl;
+    cout << "Enter your choice (a-d): ";
     
-    while (left <= right) {
-        size_t mid = left + (right - left) / 2;
-        
-        if (books[mid].title == title) {
-            return mid;  // Return the index of the found book
-        }
-        
-        if (books[mid].title < title) {
-            left = mid + 1;
-        } else {
-            right = mid - 1;
-        }
+    char sortChoice;
+    cin >> sortChoice;
+    cin.ignore();
+
+    switch(sortChoice) {
+        case 'a':
+        case 'A':
+            sortByTitle(books, numBooks);
+            break;
+        case 'b':
+        case 'B':
+            sortByAuthor(books, numBooks);
+            break;
+        case 'c':
+        case 'C':
+            sortByYearAsc(books, numBooks);
+            break;
+        case 'd':
+        case 'D':
+            sortByYearDesc(books, numBooks);
+            break;
+        default:
+            cout << "Invalid sorting option!" << endl;
+            break;
     }
-    return -1;  // Return -1 if not found
+
+    cout << "\nSorted Books:" << endl;
+    cout << "----------------" << endl;
+    for (int i = 0; i < numBooks; ++i) {
+        cout << "Title: " << books[i].title << endl;
+        cout << "Author: " << books[i].author << endl;
+        cout << "Publication Year: " << books[i].year_of_publication << endl;
+        cout << "----------------" << endl;
+    }
+
+    cout << "\nPress Enter to continue...";
+    cin.get();
+}
+
+// Function to search books
+void searchBooks(const bookStructure books[], int numBooks) {
+    cout << "\nChoose search option:" << endl;
+    cout << "a. By Title" << endl;
+    cout << "b. By Author" << endl;
+    cout << "c. Find Newest Book" << endl;
+    cout << "d. Find Oldest Book" << endl;
+    cout << "Enter your choice (a-d): ";
+    
+    string searchChoice;
+    getline(cin, searchChoice);
+    
+    if (searchChoice == "a") {
+        cout << "Enter title to search: ";
+        string searchTitle;
+        getline(cin, searchTitle);
+        
+        sortByTitle(books, numBooks);
+        int index = binarySearchByTitle(books, numBooks, searchTitle);
+        
+        if (index != -1) {
+            cout << "\nThe Book is found:" << endl;
+            cout << "Title: " << books[index].title << endl;
+            cout << "Author: " << books[index].author << endl;
+            cout << "Publication Year: " << books[index].year_of_publication << endl;
+        } else {
+            cout << "Book not found!" << endl;
+        }
+    } else if (searchChoice == "b") {
+        cout << "Enter author to search: ";
+        string searchAuthor;
+        getline(cin, searchAuthor);
+        
+        int index = linearSearchByAuthor(books, numBooks, searchAuthor);
+        
+        if (index != -1) {
+            cout << "\nThe Book is found:" << endl;
+            cout << "Title: " << books[index].title << endl;
+            cout << "Author: " << books[index].author << endl;
+            cout << "Publication Year: " << books[index].year_of_publication << endl;
+        } else {
+            cout << "Book not found!" << endl;
+        }
+    } else if (searchChoice == "c") {
+        if (numBooks == 0) {
+            cout << "No books available!" << endl;
+        } else {
+            sortByYearDesc(books, numBooks);
+            cout << "\nThe Newest Book:" << endl;
+            cout << "Title: " << books[0].title << endl;
+            cout << "Author: " << books[0].author << endl;
+            cout << "Publication Year: " << books[0].year_of_publication << endl;
+        }
+    } else if (searchChoice == "d") {
+        if (numBooks == 0) {
+            cout << "No books available!" << endl;
+        } else {
+            sortByYearAsc(books, numBooks);
+            cout << "\nThe Oldest Book:" << endl;
+            cout << "Title: " << books[0].title << endl;
+            cout << "Author: " << books[0].author << endl;
+            cout << "Publication Year: " << books[0].year_of_publication << endl;
+        }
+    } else {
+        cout << "Invalid search option!" << endl;
+    }
+
+    cout << "\nPress Enter to continue...";
+    cin.get();
 }
 
 
