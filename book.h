@@ -7,6 +7,13 @@
 #include <stdexcept>
 #include <cstdlib>
 
+using namespace std;
+
+struct bookStructure {
+    string title;
+    string author;
+    int year_of_publication;
+};
 void viewAllBooks(const bookStructure books[], int numBooks);
 void insertNewBook(bookStructure books[], int& numBooks);
 void deleteBookByTitle(bookStructure books[], int& numBooks);
