@@ -2,6 +2,9 @@
 #define BOOK_h
 
 #include <iostream>
+#include <fstream>
+#include <sstream>
+#include <stdexcept>
 #include <cstdlib>
 
 void viewAllBooks(const bookStructure books[], int numBooks);
