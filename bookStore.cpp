@@ -6,13 +6,6 @@
 
 const int MAX_BOOKS = 10000;
 
-void viewAllBooks(const bookStructure books[], int numBooks);
-void insertNewBook(bookStructure books[], int& numBooks);
-void deleteBookByTitle(bookStructure books[], int& numBooks);
-void sortBooks(bookStructure books[], int numBooks);
-void searchBooks(const bookStructure books[], int numBooks);
-void saveBooks(const bookStructure books[], int numBooks);
-void loadBooks(bookStructure books[], int& numBooks);
 
 int main() {
     bookStructure books[MAX_BOOKS];
