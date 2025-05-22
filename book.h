@@ -4,11 +4,13 @@
 #include <iostream>
 #include <cstdlib>
 
-void viewBooks();
-void insertBook();
-void deleteBook();
-void sortBooks(); 
-void searchBooks(); 
+void viewAllBooks(const bookStructure books[], int numBooks);
+void insertNewBook(bookStructure books[], int& numBooks);
+void deleteBookByTitle(bookStructure books[], int& numBooks);
+void sortBooks(bookStructure books[], int numBooks);
+void searchBooks(const bookStructure books[], int numBooks);
+void saveBooks(const bookStructure books[], int numBooks);
+void loadBooks(bookStructure books[], int& numBooks);
 
 
 
