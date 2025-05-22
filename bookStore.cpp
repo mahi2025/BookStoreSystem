@@ -1,8 +1,4 @@
 #include "book.h"
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <stdexcept>
 
 const int MAX_BOOKS = 10000;
 
