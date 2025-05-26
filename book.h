@@ -1,27 +1,34 @@
 #ifndef BOOK_H
-#define BOOK_h
+#define BOOK_H
 
 #include <iostream>
-#include <fstream>
-#include <sstream>
-#include <stdexcept>
+#include <string>
 #include <cstdlib>
 
 using namespace std;
 
-struct bookStructure {
+struct Book{
     string title;
     string author;
     int year_of_publication;
 };
-void viewAllBooks(const bookStructure books[], int numBooks);
-void insertNewBook(bookStructure books[], int& numBooks);
-void deleteBookByTitle(bookStructure books[], int& numBooks);
-void sortBooks(bookStructure books[], int numBooks);
-void searchBooks(const bookStructure books[], int numBooks);
-void saveBooks(const bookStructure books[], int numBooks);
-void loadBooks(bookStructure books[], int& numBooks);
+
+const int MAX_BOOKS= 10000;
+
+//function declaration
+void viewBooks(Book books[], int size);
+void insertBook(Book books[], int &size);
+void deleteBook(Book books[], int &size, const string &title);
 
 
+//Sorting Functions using Insertion Sort
+void sortByTitle(Book books[], int size);
+void sortByAuthor(Book books[], int size);
+void sortByYearAsc(Book books[], int size);
+void sortByYearDesc(Book books[], int size);
+//searching
+int linearSearchByTitle(Book books[], int size, const string &title);
+int linearSearchByAuthor(Book books[], int size, const string &author);
+int binarySearchByTitle(Book books[], int size, const string &title);
 
 #endif
