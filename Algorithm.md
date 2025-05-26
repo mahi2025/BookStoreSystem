@@ -1,4 +1,4 @@
-//Step by Step Algorithm of the code conatin Feature, Algorithms Used, pseudocode, Menu dispaly, Simple Flow chart
+//Step by Step Algorithm of the code that conatins Feature, Algorithms Used, pseudocode, Menu dispaly, Simple Flow chart
 # Features 
 
 Feature	                Action
