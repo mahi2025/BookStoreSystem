@@ -11,8 +11,8 @@ Exit	                End the program
   
 
 # Algorithms Used
-Insertion Sort 
-Linear Search
+Insertion Sort |
+Linear Search |
 Binary Search for lists sorted by title 
 
 # Pseudocode 
@@ -20,11 +20,11 @@ Binary Search for lists sorted by title
 Start
 
 Create a structure Book with:
-    - title
-    - author
-    - dateOfPublication
+    title |
+    author |
+    dateOfPublication
 
-Create a vector of books
+Create an array of books
 
 repeat:
     Display Menu:
@@ -51,7 +51,7 @@ repeat:
 
     if choice is Insert a New Book:
         Input title, author, dateOfPublication
-        Add book to list
+        Add book to arrayList
 
     if choice is Delete a Book:
         Input title to delete
@@ -73,7 +73,7 @@ repeat:
             - Find newest/oldest (simple scan)
 
     if choice is Exit:
-        Display "Goodbye!" and stop the program
+        Display "Thank you for using BookStore System." and stop the program
 
 until choice is Exit
 
