@@ -12,7 +12,7 @@ int main() {
     bool run = true;
 
     while (run) {
-        system("cls"); // Use "clear" for Linux/Mac or comment out
+        system("cls"); 
 
         cout << "\n=== Welcome to BookStore System ===" << endl;
         cout << "1. View All Books" << endl;
@@ -51,11 +51,21 @@ int main() {
                 cin >> sortChoice;
                 cin.ignore();
                 switch (sortChoice) {
-                    case 1: sortByTitle(books, size); break;
-                    case 2: sortByAuthor(books, size); break;
-                    case 3: sortByYearAsc(books, size); break;
-                    case 4: sortByYearDesc(books, size); break;
-                    default: cout << "Invalid sort option.\n"; break;
+                    case 1: 
+                        sortByTitle(books, size); 
+                        break;
+                    case 2:
+                        sortByAuthor(books, size);
+                        break;
+                    case 3: 
+                        sortByYearAsc(books, size);
+                         break;
+                    case 4: 
+                        sortByYearDesc(books, size);
+                        break;
+                    default:
+                        cout << "Invalid option.\n"; 
+                        break;
                 }
                 break;
             }
